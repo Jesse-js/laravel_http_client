@@ -17,5 +17,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     $response = Http::get('https://api.github.com/users/Jesse-js/repos');
     
-    return view('welcome');
+    return view('repos', ['repos' => $response->json()]);
+});
+
+
+
+Route::get('/movies', function () {
+    $response = Http::get('http://www.omdbapi.com/?apikey=['.env('OMDB_API_KEY').']&s=batman');
+    dd($response->json());
+    return view('movies', ['movies' => $response->json()]);
 });
