@@ -16,6 +16,7 @@ class ListItem extends Component
         public array|Collection $items = [],
         public string $firstField = '',
         public string $secondField = '',
+        public string $imgField = '',
     ) {
     }
 
