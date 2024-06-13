@@ -12,8 +12,11 @@ class ListItem extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct(public array|Collection $items = [])
-    {
+    public function __construct(
+        public array|Collection $items = [],
+        public string $firstField = '',
+        public string $secondField = '',
+    ) {
     }
 
     /**

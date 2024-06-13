@@ -23,7 +23,7 @@ Route::get('/', function () {
 
 
 Route::get('/movies', function () {
-    $response = Http::get('http://www.omdbapi.com/?apikey=['.env('OMDB_API_KEY').']&s=batman');
-    dd($response->json());
+    $response = Http::get('http://www.omdbapi.com/?apikey='.env('OMDB_API_KEY').'&s=batman');
+    // dd($response->json());
     return view('movies', ['movies' => $response->json()]);
 });
