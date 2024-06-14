@@ -27,5 +27,12 @@ class AppServiceProvider extends ServiceProvider
         Http::macro('omdb', function () {
             return Http::baseUrl('http://www.omdbapi.com?apikey=' . env('OMDB_API_KEY'))->timeout(10);
         });
+
+        Http::macro('invoicesApi', function () {
+            return Http::withHeaders([
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . env('INVOICES_API_KEY'),
+            ])->baseUrl(env('INVOICES_API_URL'));
+        });
     }
 }

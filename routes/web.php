@@ -29,6 +29,19 @@ Route::get('/movies', function () {
     }
 
     $data = $response->json();
-    
+
     return view('movies', ['movies' => $data['Search']]);
+});
+
+Route::get('/invoices', function () {
+    $response = Http::invoicesApi()->get('/invoices?amount[lt]=200&type[eq]=b');
+
+    if ($response->failed()) {
+        if ($response->status() === 401) {
+            abort(401, 'Unauthorized');
+        }
+    }
+    $data = $response->json();
+
+    return view('invoices', ['invoices' => $data['data'] ?? []]);
 });
