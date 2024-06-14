@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -50,15 +51,30 @@ Route::get('/invoices', function () {
 });
 
 Route::get('/retry', function () {
-    
     $response = Http::retry(3, 100, function (Exception $exception, PendingRequest $request) {
+        if ($exception->getCode() === 404) {
+            return false;
+        }
         Log::info("Retrying request");
         return true;
-    })->get('https://api.github.com/users/Jesse-js/repios');
+    }, false)->get('https://api.github.com/users/Jesse-js/repios');
 
-    dd($response->json());
+    dd($response->failed());
     if ($response->failed()) {
         abort($response->status(), $response->json());
     };
     return view('repos', ['repos' => $response->json()]);
+});
+
+
+Route::get('/concurrent', function () {
+    $responses = Http::pool(fn (Pool $pool) => [
+        $pool->as('github')->get('https://api.github.com/users/Jesse-js/repos'),
+        $pool->as('movie')->get('http://www.omdbapi.com', [
+            'apikey' => env('OMDB_API_KEY'),
+            's' => 'batman',
+        ]),
+    ]);
+
+    dd($responses['movie']);
 });
