@@ -29,6 +29,6 @@ Route::get('/movies', function () {
     }
 
     $data = $response->json();
-    // dd($data['Search']);
+    
     return view('movies', ['movies' => $data['Search']]);
 });
