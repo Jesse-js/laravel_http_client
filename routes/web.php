@@ -1,6 +1,9 @@
 <?php
 
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -44,4 +47,18 @@ Route::get('/invoices', function () {
     $data = $response->json();
 
     return view('invoices', ['invoices' => $data['data'] ?? []]);
+});
+
+Route::get('/retry', function () {
+    
+    $response = Http::retry(3, 100, function (Exception $exception, PendingRequest $request) {
+        Log::info("Retrying request");
+        return true;
+    })->get('https://api.github.com/users/Jesse-js/repios');
+
+    dd($response->json());
+    if ($response->failed()) {
+        abort($response->status(), $response->json());
+    };
+    return view('repos', ['repos' => $response->json()]);
 });
